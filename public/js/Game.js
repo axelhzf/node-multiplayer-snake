@@ -14,12 +14,23 @@
         var canvas = $("#canvas")[0];
         var ctx = canvas.getContext("2d");
 
-        var gameObjects = [];
+        var gameViews = new Backbone.ChildViewContainer();
 
-        var snake = new Game.Player({ctx : ctx});
-        var food = new Game.Food({ctx : ctx, x : 20, y : 20});
-        gameObjects.push(snake);
-        gameObjects.push(food);
+        var players = new Backbone.Collection({
+            model : Game.Player
+        });
+
+        players.on('add', function (model) {
+            var playerView = new Game.PlayerView({model : model, ctx : ctx});
+            gameViews.add(playerView);
+        });
+
+        players.on('remove', function (model) {
+            var playerView = gameViews.findByModel(model);
+            if (playerView) {
+                gameViews.remove(playerView);
+            }
+        });
 
         var lastTime = 0;
         var mainLoop = function (time) {
@@ -27,14 +38,9 @@
 
             if (dt > Game.speed) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                var i;
-                for (i = 0; i < gameObjects.length; i++) {
-                    gameObjects[i].step(dt);
-                }
-                for (i = 0; i < gameObjects.length; i++) {
-                    gameObjects[i].render(dt);
-                }
+                gameViews.each(function (gameView) {
+                    gameView.render(dt);
+                });
                 lastTime = time;
             }
         };
@@ -43,7 +49,24 @@
             requestAnimationFrame(animloop);
             mainLoop(dt);
         })();
+
+        var socket = io.connect('http://localhost');
+        socket.on('boardState', function (boardInfo) {
+            players.set(boardInfo.players);
+        });
+
     };
+
+//    KEYBOARD controls
+//    if (Game.controls.keys.LEFT && this.direction.y) {
+//        this.direction = {x : -1, y : 0};
+//    } else if (Game.controls.keys.RIGHT && this.direction.y) {
+//        this.direction = {x : 1, y : 0};
+//    } else if (Game.controls.keys.UP && this.direction.x) {
+//        this.direction = {x : 0, y : -1};
+//    } else if (Game.controls.keys.DOWN && this.direction.x) {
+//        this.direction = {x : 0, y : 1};
+//    }
 
 }());
 

@@ -2,9 +2,9 @@
  * Module dependencies.
  */
 
-var express = require('express'),
-    http = require('http'),
-    path = require('path');
+var express = require('express');
+var http = require('http');
+var path = require('path');
 
 var app = express();
 
@@ -30,6 +30,11 @@ app.get('/', function (req, res) {
     res.render('index', {title : 'TLP2k13'})
 });
 
-http.createServer(app).listen(app.get('port'), function () {
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+
+require('./app/GameServer')(io);
+
+server.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
