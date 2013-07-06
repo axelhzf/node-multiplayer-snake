@@ -1,0 +1,13 @@
+{
+    "undef" : true,
+    "unused" : true,
+    "node" : true,
+    "browser" : true,
+    "globals" : {
+        "_" : false,
+        "Game" : false,
+        "Backbone" : false,
+        "$" : false,
+        "io" : false
+    }
+}

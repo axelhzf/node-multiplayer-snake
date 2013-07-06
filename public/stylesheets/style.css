@@ -1,9 +1,27 @@
 body {
     padding: 50px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-    background-color: #ccc;
+    background-color: #161616;
 }
 
-canvas {
-    background-color: #fff;
+.canvasContainer {
+    position:relative;
+}
+
+.playersCanvas, .boardCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.boardCanvas {
+    z-index : 3;
+}
+
+.foodCanvas {
+    z-index : 2;
+}
+
+.playersCanvas {
+    z-index : 1;
 }
