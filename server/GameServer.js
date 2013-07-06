@@ -25,9 +25,47 @@ module.exports = function (io) {
         return data;
     };
 
+    var detectCollisions = function () {
+        var playersParts = players.pluck('parts');
+
+        var heads = _.map(playersParts, function (parts) {
+            return _.first(parts);
+        });
+
+        //Fod collisions
+        _.each(heads, function (head, i) {
+            var collidedFood = foodCollection.find(function (food) {
+                return head.x === food.get('x') && head.y === food.get('y');
+            });
+            if(collidedFood) {
+                foodCollection.remove(collidedFood);
+                players.at(i).eat();
+            }
+        });
+
+        _.each(heads, function (head, i) {
+            var collidedPlayer = _.find(playersParts, function (parts, j) {
+                if (i === j) {
+                    parts = parts.slice(1);
+                }
+                var collidedPart = _.find(parts, function (part) {
+                    return head.x === part.x && head.y === part.y;
+                });
+                return !_.isUndefined(collidedPart);
+            });
+
+            if (collidedPlayer) {
+                 players.at(i).die();
+            }
+
+        });
+
+    };
 
     var gameLoop = function () {
         players.invoke('movePosition');
+        detectCollisions();
+
         var data = updateData({players : true, food : true});
         players.each(function (player) {
             player.get('socket').emit('update', data);
@@ -55,6 +93,11 @@ module.exports = function (io) {
             if (player) {
                 players.remove(player);
             }
+        });
+
+        socket.on('keydown', function (key) {
+            var player = players.get(socket.id);
+            player.set('lastKey', key);
         });
 
     });

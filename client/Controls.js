@@ -3,11 +3,7 @@
 (function () {
     "use strict";
 
-    var KEY_NAMES = { LEFT : 37, RIGHT : 39, SPACE : 32,
-        UP : 38, DOWN : 40,
-        Z : 90, X : 88
-    };
-
+    var KEY_NAMES = { LEFT : 37, RIGHT : 39, UP : 38, DOWN : 40};
     var KEY_NAMES_INV = _.invert(KEY_NAMES);
 
     Game.Controls = function () {
@@ -37,7 +33,7 @@
             if (KEY_NAMES_INV[key]) {
                 e.preventDefault();
                 this.keys[KEY_NAMES_INV[key]] = true;
-                this.trigger("keydown");
+                this.trigger("keydown", KEY_NAMES_INV[key]);
             }
         },
 

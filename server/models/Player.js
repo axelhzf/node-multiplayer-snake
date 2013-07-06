@@ -23,9 +23,9 @@ var Player = Backbone.Model.extend({
     movePosition : function () {
         var board = this.get('board');
 
-        this.attributes.parts.pop();
         var newPart = _.clone(this.attributes.parts[0]);
 
+        this.calculateNewDirection();
         newPart.x = newPart.x + this.attributes.direction.x;
         newPart.y = newPart.y + this.attributes.direction.y;
 
@@ -42,7 +42,34 @@ var Player = Backbone.Model.extend({
             newPart.y = 0;
         }
 
+        this.lastRemovedPart = this.attributes.parts.pop();
         this.attributes.parts.unshift(newPart);
+    },
+
+    calculateNewDirection : function () {
+        var key = this.get('lastKey');
+        var direction = this.get('direction');
+
+        if (key === "LEFT" && direction.y) {
+            this.set('direction', {x : -1, y : 0});
+        } else if (key === "RIGHT" && direction.y) {
+            this.set('direction', {x : 1, y : 0});
+        } else if (key === "UP" && direction.x) {
+            this.set('direction', {x : 0, y : -1});
+        } else if (key === "DOWN" && direction.x) {
+            this.set('direction', {x : 0, y : 1});
+        }
+
+    },
+
+    die : function () {
+        var parts = this.get('parts').slice(0, 1);
+        this.set('parts', parts);
+    },
+
+    eat : function () {
+        console.log('eat');
+        this.get('parts').push(this.lastRemovedPart);
     },
 
     toJSON : function () {

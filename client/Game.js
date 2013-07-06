@@ -37,7 +37,18 @@
             }
 
         });
+
+
+        var controls = new Game.Controls();
+        controls.on('keydown', function (key) {
+            socket.emit('keydown', key);
+        });
+
+        controls.start();
     };
+
+
+
 
 //    KEYBOARD controls
 //    if (Game.controls.keys.LEFT && this.direction.y) {
