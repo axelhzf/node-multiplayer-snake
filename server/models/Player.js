@@ -8,7 +8,7 @@ var Player = Backbone.Model.extend({
         maxScore : 0
     },
 
-    initialize : function (attributes, options) {
+    initialize : function (attributes) {
         var parts = [
             {x : 0, y : 0}
         ];
