@@ -33,13 +33,13 @@ var Player = Backbone.Model.extend({
         // control game limits
         if (newPart.x < 0) {
             newPart.x = board.get('x');
-        } else if (newPart.x > board.get('x')) {
+        } else if (newPart.x >= board.get('x')) {
             newPart.x = 0;
         }
 
         if (newPart.y < 0) {
             newPart.y = board.get('y');
-        } else if (newPart.y > board.get('y')) {
+        } else if (newPart.y >= board.get('y')) {
             newPart.y = 0;
         }
 

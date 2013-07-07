@@ -13,8 +13,8 @@
 
 √ Scoreboard refresh too much
 √ Color of current user
-* Sort scores
-* Fix limit of the board
+√ Sort scores
+√ Fix limit of the board
 * Change color of food
 * Limit the number of food
 * Collisions with food fail?

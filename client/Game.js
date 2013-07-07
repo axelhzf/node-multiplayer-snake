@@ -52,7 +52,6 @@
 
         });
 
-
         var controls = new Game.Controls();
         controls.on('keydown', function (key) {
             socket.emit('keydown', key);
