@@ -27,7 +27,7 @@
         this.scoresView = new Game.ScoresView({el : scoresViewEl, collection : this.scores});
 
 
-        var socket = io.connect('http://localhost');
+        var socket = io.connect('/');
         var self = this;
 
         socket.emit('addPlayer', this.username);

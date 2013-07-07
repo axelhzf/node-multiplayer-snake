@@ -37,6 +37,7 @@ GameServer.prototype = {
         };
         this.foodCollection.on('add', includeFood);
         this.foodCollection.on('remove', includeFood);
+        this.players.on('add', includeFood);
 
         this.players.on('add', function () {
             self.updateDataFields.board = true;
