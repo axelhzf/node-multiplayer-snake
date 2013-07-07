@@ -19,17 +19,8 @@ Game.FoodView = Backbone.View.extend({
         this.food.each(function (f) {
             var x = f.get('x');
             var y = f.get('y');
-
-            var radius = (cellWidth / 2) - 1; //margin
-            var centerX = x * cellWidth +  (cellWidth / 2) + 0.5;
-            var centerY = y * cellHeight + (cellWidth / 2) + 0.5;
-
-            this.ctx.beginPath();
-            this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-            this.ctx.fill();
-            this.ctx.closePath();
+            this.ctx.fillRect(x * cellWidth + 0.5, y * cellHeight + 0.5, cellWidth, cellHeight );
         }, this);
-
     },
 
     render : function () {
