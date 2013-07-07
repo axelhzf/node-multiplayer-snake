@@ -104,9 +104,11 @@ module.exports = function (io) {
     setInterval(gameLoop, 100);
 
     var addFood = function () {
-        var x = _.random(0, board.get('x'));
-        var y = _.random(0, board.get('y'));
-        foodCollection.add({x : x, y : y});
+        if (foodCollection.length < 10) {
+            var x = _.random(0, board.get('x'));
+            var y = _.random(0, board.get('y'));
+            foodCollection.add({x : x, y : y});
+        }
     };
 
     setInterval(addFood, 3000);
