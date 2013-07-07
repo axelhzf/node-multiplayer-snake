@@ -33,7 +33,6 @@ app.get('/', function (req, res) {
 });
 
 app.get('/:username', function (req, res) {
-    console.log(req.route.params);
     res.render('index', {username : req.route.params.username });
 });
 
