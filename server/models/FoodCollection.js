@@ -1,4 +1,4 @@
-var Backbone = require('Backbone');
+var Backbone = require('backbone');
 var Food = require('./Food');
 
 var FoodCollection = Backbone.Collection.extend({

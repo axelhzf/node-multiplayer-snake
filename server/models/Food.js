@@ -1,4 +1,4 @@
-Backbone = require('Backbone');
+Backbone = require('backbone');
 
 var Food = Backbone.Model.extend({
 
