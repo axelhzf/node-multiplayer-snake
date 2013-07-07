@@ -3,4 +3,3 @@
 node_modules
 *.iml
 atlassian-ide-plugin.xml
-public/components
