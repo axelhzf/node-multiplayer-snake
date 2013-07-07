@@ -16,9 +16,10 @@
 √ Sort scores
 √ Fix limit of the board
 √ Change color and shape of food
-* Limit the number of food
-* Collisions with food fail?
+√ Limit the number of food
+
 * Stop game loop if no player connect
+* Collisions with food fail?
 * Slides
 * Deployment
 * Integration of websockets with ios and android?

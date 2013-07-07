@@ -5,8 +5,7 @@ Game.FoodView = Backbone.View.extend({
         this.board = options.board;
         this.food = options.food;
 
-        this.listenTo(this.food, "add", this.render);
-        this.listenTo(this.food, "remove", this.render);
+        this.listenTo(this.food, "reset", this.render);
     },
 
     draw : function () {

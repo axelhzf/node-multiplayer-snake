@@ -3,33 +3,79 @@ var Board = require('./models/Board');
 var PlayerCollection = require('./models/PlayerCollection');
 var FoodCollection = require('./models/FoodCollection');
 
-module.exports = function (io) {
+var GameServer = function (options) {
+    this.initialize(options);
+};
 
-    var board = new Board();
-    var players = new PlayerCollection();
-    var foodCollection = new FoodCollection();
+GameServer.prototype = {
 
-    var updateData = function (options) {
-        var data = {};
-        if (options.players) {
-            data.players = players.toJSON();
+    initialize : function (options) {
+        this.io = options.io;
+
+        this.board = new Board();
+        this.players = new PlayerCollection();
+        this.foodCollection = new FoodCollection();
+
+        this.updateDataFields = {players : true};  //information to send on the next update event
+
+        this.bindModelEvents();
+        this.bindSocketsEvents();
+    },
+
+    bindModelEvents : function () {
+        var self = this;
+
+        var includeScores = function () {
+            self.updateDataFields.scores = true;
+        };
+        this.players.on('add', includeScores);
+        this.players.on('remove', includeScores);
+        this.players.on('change:score', includeScores);
+
+        var includeFood = function () {
+            self.updateDataFields.food = true;
+        };
+        this.foodCollection.on('add', includeFood);
+        this.foodCollection.on('remove', includeFood);
+
+        this.players.on('add', function () {
+            self.updateDataFields.board = true;
+        });
+    },
+
+    bindSocketsEvents : function () {
+        var self = this;
+        this.io.sockets.on('connection', function (socket) {
+            socket.on('addPlayer', _.bind(self.onSocketAddPlayer, self, socket));
+            socket.on('disconnect', _.bind(self.onSocketDisconnect, self, socket));
+            socket.on('keydown', _.bind(self.onSocketKeydown, self, socket));
+        });
+    },
+
+    onSocketAddPlayer : function (socket, username) {
+        this.players.add({username : username, socket : socket, board : this.board});
+        if (this.players.length === 1) {
+            this.startIntervals();
         }
-        if (options.food) {
-            data.food = foodCollection.toJSON();
-        }
-        if (options.board) {
-            data.board = board.toJSON();
-        }
+    },
 
-        if (options.scores) {
-            data.scores = players.invoke("pick", "username", "score", "maxScore");
+    onSocketDisconnect : function (socket) {
+        var player = this.players.get(socket.id);
+        if (player) {
+            this.players.remove(player);
         }
+        if (this.players.length === 0) {
+            this.stopIntervals();
+        }
+    },
 
-        return data;
-    };
+    onSocketKeydown : function (socket, key) {
+        var player = this.players.get(socket.id);
+        player.set('lastKey', key);
+    },
 
-    var detectCollisions = function () {
-        var playersParts = players.pluck('parts');
+    detectCollisions : function () {
+        var playersParts = this.players.pluck('parts');
 
         var heads = _.map(playersParts, function (parts) {
             return _.first(parts);
@@ -37,16 +83,15 @@ module.exports = function (io) {
 
         //Fod collisions
         _.each(heads, function (head, i) {
-            var collidedFood = foodCollection.find(function (food) {
+            var collidedFood = this.foodCollection.find(function (food) {
                 return head.x === food.get('x') && head.y === food.get('y');
             });
-            if (collidedFood) {
-                foodCollection.remove(collidedFood);
-                players.at(i).eat();
-            }
-        });
 
-        _.each(heads, function (head, i) {
+            if (collidedFood) {
+                this.foodCollection.remove(collidedFood);
+                this.players.at(i).eat();
+            }
+
             var collidedPlayer = _.find(playersParts, function (parts, j) {
                 if (i === j) {
                     parts = parts.slice(1);
@@ -58,82 +103,69 @@ module.exports = function (io) {
             });
 
             if (collidedPlayer) {
-                players.at(i).die();
+                this.players.at(i).die();
             }
 
-        });
+        }, this);
+    },
 
-    };
+    updateData : function () {
+        var data = {};
+        if (this.updateDataFields.players) {
+            data.players = this.players.toJSON();
+        }
+        if (this.updateDataFields.food) {
+            data.food = this.foodCollection.toJSON();
+        }
+        if (this.updateDataFields.board) {
+            data.board = this.board.toJSON();
+        }
+        if (this.updateDataFields.scores) {
+            data.scores = this.players.invoke("pick", "username", "score", "maxScore");
+        }
 
-    var updateInfo = {players : true};
+        this.updateDataFields = {players : true};
 
-    var gameLoop = function () {
-        players.invoke('movePosition');
-        detectCollisions();
+        return data;
+    },
 
-        var data = updateData(updateInfo);
-        players.each(function (player) {
+    gameLoop : function () {
+        this.players.invoke('movePosition');
+        this.detectCollisions();
+        var data = this.updateData();
+
+        this.players.each(function (player) {
             player.get('socket').emit('update', data);
         });
+    },
 
-        updateInfo = {players : true};
-    };
-
-
-    players.on('add', function () {
-        updateInfo.scores = true;
-    });
-
-    players.on('remove', function () {
-        updateInfo.scores = true;
-    });
-
-    players.on('change:score', function () {
-        updateInfo.scores = true;
-    });
-
-    foodCollection.on('add', function () {
-        updateInfo.food = true;
-    });
-
-    foodCollection.on('remove', function () {
-        updateInfo.food = true;
-    });
-
-
-    setInterval(gameLoop, 100);
-
-    var addFood = function () {
-        if (foodCollection.length < 10) {
-            var x = _.random(0, board.get('x'));
-            var y = _.random(0, board.get('y'));
-            foodCollection.add({x : x, y : y});
+    addFood : function () {
+        if (this.foodCollection.length < 10) {
+            var x = _.random(0, this.board.get('x'));
+            var y = _.random(0, this.board.get('y'));
+            this.foodCollection.add({x : x, y : y});
         }
-    };
+    },
 
-    setInterval(addFood, 3000);
+    startIntervals : function () {
+        this.stopIntervals();
+        console.log("start intervals");
+        this.gameLoopIntervalesId = setInterval(_.bind(this.gameLoop, this), 100);
+        this.addFoodIntervalId = setInterval(_.bind(this.addFood, this), 3000);
+    },
 
+    stopIntervals : function () {
+        console.log("stop intervals");
 
-    io.sockets.on('connection', function (socket) {
+        if (this.gameLoopIntervalesId) {
+            clearInterval(this.gameLoopIntervalesId);
+        }
 
-        socket.on('addPlayer', function (username) {
-            players.add({username : username, socket : socket, board : board});
-        });
-
-        socket.emit('update', updateData({board : true, players : true, food : true, scores : true}));
-
-        socket.on('disconnect', function () {
-            var player = players.get(socket.id);
-            if (player) {
-                players.remove(player);
-            }
-        });
-
-        socket.on('keydown', function (key) {
-            var player = players.get(socket.id);
-            player.set('lastKey', key);
-        });
-
-    });
+        if (this.addFoodIntervalId) {
+            clearInterval(this.addFoodIntervalId);
+        }
+    }
 
 };
+
+module.exports = GameServer;

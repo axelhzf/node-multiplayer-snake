@@ -39,11 +39,11 @@
             }
 
             if (data.players) {
-                self.players.set(data.players);
+                self.players.reset(data.players);
             }
 
             if (data.food) {
-                self.food.set(data.food);
+                self.food.reset(data.food);
             }
 
             if (data.scores) {

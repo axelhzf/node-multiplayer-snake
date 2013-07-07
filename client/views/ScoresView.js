@@ -20,4 +20,5 @@
             this.$el.html(this.template({scores : scores}));
         }
     });
+
 })();
