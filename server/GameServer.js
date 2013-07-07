@@ -1,14 +1,12 @@
 var _ = require('underscore');
-var Backbone = require('Backbone');
 var Board = require('./models/Board');
-var Player = require('./models/Player');
-var Players = require('./models/Players');
+var PlayerCollection = require('./models/PlayerCollection');
 var FoodCollection = require('./models/FoodCollection');
 
 module.exports = function (io) {
 
     var board = new Board();
-    var players = new Players();
+    var players = new PlayerCollection();
     var foodCollection = new FoodCollection();
 
     var updateData = function (options) {
@@ -22,6 +20,11 @@ module.exports = function (io) {
         if (options.board) {
             data.board = board.toJSON();
         }
+
+        if (options.scores) {
+            data.scores = players.invoke("pick", "username", "score", "maxScore");
+        }
+
         return data;
     };
 
@@ -37,7 +40,7 @@ module.exports = function (io) {
             var collidedFood = foodCollection.find(function (food) {
                 return head.x === food.get('x') && head.y === food.get('y');
             });
-            if(collidedFood) {
+            if (collidedFood) {
                 foodCollection.remove(collidedFood);
                 players.at(i).eat();
             }
@@ -55,22 +58,48 @@ module.exports = function (io) {
             });
 
             if (collidedPlayer) {
-                 players.at(i).die();
+                players.at(i).die();
             }
 
         });
 
     };
 
+    var updateInfo = {players : true};
+
     var gameLoop = function () {
         players.invoke('movePosition');
         detectCollisions();
 
-        var data = updateData({players : true, food : true});
+        var data = updateData(updateInfo);
         players.each(function (player) {
             player.get('socket').emit('update', data);
         });
+
+        updateInfo = {players : true};
     };
+
+
+    players.on('add', function () {
+        updateInfo.scores = true;
+    });
+
+    players.on('remove', function () {
+        updateInfo.scores = true;
+    });
+
+    players.on('change:score', function () {
+        updateInfo.scores = true;
+    });
+
+    foodCollection.on('add', function () {
+        updateInfo.food = true;
+    });
+
+    foodCollection.on('remove', function () {
+        updateInfo.food = true;
+    });
+
 
     setInterval(gameLoop, 100);
 
@@ -84,9 +113,12 @@ module.exports = function (io) {
 
 
     io.sockets.on('connection', function (socket) {
-        players.add({socket : socket, board : board});
 
-        socket.emit('update', updateData({board : true, players : true, food : true}));
+        socket.on('addPlayer', function (username) {
+            players.add({username : username, socket : socket, board : board});
+        });
+
+        socket.emit('update', updateData({board : true, players : true, food : true, scores : true}));
 
         socket.on('disconnect', function () {
             var player = players.get(socket.id);

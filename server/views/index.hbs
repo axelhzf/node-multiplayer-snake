@@ -3,34 +3,54 @@
 <head>
     <meta charset="utf-8">
     <title>{{title}}</title>
-    <link rel="stylesheet" href="stylesheets/style.css"/>
+    <link rel="stylesheet" href="/public/stylesheets/style.css"/>
 </head>
 <body>
 
 
-<div class="canvasContainer">
-    <canvas class="playersCanvas" width="501" height="501"></canvas>
-    <canvas class="foodCanvas" width="501" height="501"></canvas>
-    <canvas class="boardCanvas" width="501" height="501"></canvas>
+<div class="game">
+    <div class="canvasContainer">
+        <canvas class="playersCanvas" width="501" height="501"></canvas>
+        <canvas class="foodCanvas" width="501" height="501"></canvas>
+        <canvas class="boardCanvas" width="501" height="501"></canvas>
+    </div>
+
+    <div class="scoresContainer">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>MaxScore</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 
-<script src="components/jquery/jquery.js"></script>
-<script src="components/underscore/underscore.js"></script>
-<script src="components/backbone/backbone.js"></script>
-<script src="components/backbone.babysitter/lib/backbone.babysitter.js"></script>
-<script src="components/socket.io-client/dist/socket.io.js"></script>
+<script src="/public/components/jquery/jquery.js"></script>
+<script src="/public/components/underscore/underscore.js"></script>
+<script src="/public/components/backbone/backbone.js"></script>
+<script src="/public/components/backbone.babysitter/lib/backbone.babysitter.js"></script>
+<script src="/public/components/socket.io-client/dist/socket.io.js"></script>
 
-<script src="libs/requestAnimFrame.js"></script>
+<script src="/public/libs/requestAnimFrame.js"></script>
 
-<script src="Game.js"></script>
-<script src="Controls.js"></script>
-<script src="views/BoardView.js"></script>
-<script src="views/PlayersView.js"></script>
-<script src="views/FoodView.js"></script>
+<script src="/client/Game.js"></script>
+<script src="/client/Controls.js"></script>
+<script src="/client/views/BoardView.js"></script>
+<script src="/client/views/PlayersView.js"></script>
+<script src="/client/views/FoodView.js"></script>
+<script src="/client/views/ScoresView.js"></script>
 
 <script>
-    Game.main(".canvasContainer");
+    var username = "{{username}}";
+    if (username) {
+        Game.main({el : ".game", username : username});
+    }
 </script>
 
 </body>

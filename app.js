@@ -5,8 +5,8 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-
 var app = express();
+var _ = require('underscore');
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -18,8 +18,8 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'client')));
+app.use("/public", express.static(path.join(__dirname, 'public')));
+app.use("/client", express.static(path.join(__dirname, 'client')));
 
 app.set('view engine', 'hbs');
 
@@ -29,8 +29,14 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', function (req, res) {
-    res.render('index', {title : 'TLP2k13'})
+    res.redirect("/" + _.uniqueId("anonymous"));
 });
+
+app.get('/:username', function (req, res) {
+    console.log(req.route.params);
+    res.render('index', {username : req.route.params.username });
+});
+
 
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);

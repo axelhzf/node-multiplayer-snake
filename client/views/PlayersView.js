@@ -8,9 +8,12 @@
             this.board = options.board;
         },
 
-        renderPart : function (part) {
-            this.ctx.fillStyle = "#00B993";
+        color : function () {
+            return this.model.get('username') === Game.username ? "#00FEFF" : "#FF0065";
+        },
 
+        renderPart : function (part) {
+            this.ctx.fillStyle = this.color();
             var cellWidth = this.board.get('cellWidth');
             var cellHeight = this.board.get('cellHeight');
             this.ctx.fillRect(part.x * cellWidth, part.y * cellHeight, cellWidth, cellHeight);

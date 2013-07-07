@@ -1,11 +1,30 @@
 body {
     padding: 50px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: #fff;
     background-color: #161616;
 }
 
 .canvasContainer {
-    position:relative;
+    position: relative;
+    width: 501px;
+    float: left;
+}
+
+.scoresContainer {
+    width: 200px;
+    float: left;
+    text-align: center;
+    color: #fff;
+    margin-left: 20px;
+}
+
+.scoresContainer .enemy {
+    color: #FF0065;
+}
+
+.scoresContainer .player {
+    color: #00FEFF;
 }
 
 .playersCanvas, .boardCanvas {
@@ -15,13 +34,13 @@ body {
 }
 
 .boardCanvas {
-    z-index : 3;
+    z-index: 3;
 }
 
 .foodCanvas {
-    z-index : 2;
+    z-index: 2;
 }
 
 .playersCanvas {
-    z-index : 1;
+    z-index: 1;
 }

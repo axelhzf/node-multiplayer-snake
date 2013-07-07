@@ -6,9 +6,21 @@
 √ Collisions detect
     √ Players Collisions -> Die
     √ Food Collisions -> Bigger snake
-* Username
-* Scoreboard
+
+√ Scoreboard
+    √ Username
+    √ CurrentScore / MaxScore
+
+√ Scoreboard refresh too much
+√ Color of current user
+* Sort scores
+* Fix limit of the board
 * Change color of food
+* Limit the number of food
+* Collisions with food fail?
 * Slides
 * Deployment
 * Integration of websockets with ios and android?
+
+* Scenario
+    * Scenario Collisions

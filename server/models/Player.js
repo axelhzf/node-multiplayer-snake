@@ -3,14 +3,15 @@ var _ = require('underscore');
 
 var Player = Backbone.Model.extend({
 
+    defaults : {
+        score : 0,
+        maxScore : 0
+    },
+
     initialize : function (attributes, options) {
         var parts = [
-            {x : 0, y : 0},
-            {x : 0, y : 1},
-            {x : 0, y : 2},
-            {x : 0, y : 3}
+            {x : 0, y : 0}
         ];
-
         var direction = { x : 1, y : 0};
 
         this.set({
@@ -59,24 +60,30 @@ var Player = Backbone.Model.extend({
         } else if (key === "DOWN" && direction.x) {
             this.set('direction', {x : 0, y : 1});
         }
-
     },
 
     die : function () {
         var parts = this.get('parts').slice(0, 1);
         this.set('parts', parts);
+        this.set('score', 0);
     },
 
     eat : function () {
-        console.log('eat');
         this.get('parts').push(this.lastRemovedPart);
+
+        var score = this.get('score') + 1;
+        this.set('score', score);
+        if (score > this.get('maxScore')) {
+            this.set('maxScore', score);
+        }
     },
 
     toJSON : function () {
         return {
             id : this.id,
             parts : this.attributes.parts,
-            direction : this.attributes.direction
+            direction : this.attributes.direction,
+            username : this.attributes.username
         };
     }
 

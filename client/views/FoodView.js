@@ -15,7 +15,7 @@ Game.FoodView = Backbone.View.extend({
         var cellWidth = this.board.get('cellWidth');
         var cellHeight = this.board.get('cellHeight');
 
-        this.ctx.fillStyle = "red";
+        this.ctx.fillStyle = "#D8FD06";
         this.food.each(function (f) {
             var x = f.get('x');
             var y = f.get('y');
