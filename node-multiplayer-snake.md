@@ -393,16 +393,16 @@ client
 
 ## Proyecto base
 
-[Descargar]()
+[Descargar](src/snake-base.zip)
 
 ---
 
 ## Aproximación
 
-- En juegos multijugadores real, la logica del juego se debe calcular tanto en
+- En juegos multijugadores real, la lógica del juego se debe calcular tanto en
 el cliente como en el servidor
-- Snake es un juego muy simple de forma que podemos simplicar la implementación
-y ejecutar toda la lógica del juego en el servidor
+- Snake es un juego muy simple, podemos simplicar la implementación
+y ejecutar toda la lógica en el servidor
 
 ---
 
