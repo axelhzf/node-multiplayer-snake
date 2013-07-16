@@ -1,5 +1,3 @@
-/* global $,_ , Backbone, Game */
-
 (function () {
     "use strict";
 

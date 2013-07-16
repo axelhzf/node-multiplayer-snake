@@ -82,7 +82,7 @@ GameServer.prototype = {
             return _.first(parts);
         });
 
-        //Fod collisions
+        //Collisions
         _.each(heads, function (head, i) {
             var collidedFood = this.foodCollection.find(function (food) {
                 return head.x === food.get('x') && head.y === food.get('y');
@@ -124,9 +124,7 @@ GameServer.prototype = {
         if (this.updateDataFields.scores) {
             data.scores = this.players.invoke("pick", "username", "score", "maxScore");
         }
-
         this.updateDataFields = {players : true};
-
         return data;
     },
 

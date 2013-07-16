@@ -1,4 +1,3 @@
-/* global $,_ , Backbone */
 (function () {
     "use strict";
 
@@ -33,30 +32,24 @@
         socket.emit('addPlayer', this.username);
 
         socket.on('update', function (data) {
-
             if (data.board) {
                 self.board.set(data.board);
             }
-
             if (data.players) {
                 self.players.reset(data.players);
             }
-
             if (data.food) {
                 self.food.reset(data.food);
             }
-
             if (data.scores) {
                 self.scores.reset(data.scores);
             }
-
         });
 
         var controls = new Game.Controls();
         controls.on('keydown', function (key) {
             socket.emit('keydown', key);
         });
-
         controls.start();
     };
 

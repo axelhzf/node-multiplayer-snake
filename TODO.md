@@ -18,7 +18,7 @@
 √ Change color and shape of food
 √ Limit the number of food
 √ Stop game loop if no player connect
-* Deployment
+√ Deployment
 
 * Slides
 * Integration of websockets with ios and android?
