@@ -18,7 +18,7 @@ Axel Hernández Ferrera
 
 [axelhzf.com](http://www.axelhzf.com)
 
-[@axelhzf](http://www.twitter.com)
+[@axelhzf](http://www.twitter.com/axelhzf)
 
 ---
 
